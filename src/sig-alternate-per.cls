@@ -1034,7 +1034,7 @@
             \endgroup
         \endgroup
         \csname #1mark\endcsname{#7}%
-        \vskip -12pt  %gkmt, 11 aug 99 and GM July 2000 (was -14) - numbered section head spacing
+        \vskip -2pt  %gkmt, 11 aug 99 and GM July 2000 (was -14) - numbered section head spacing
 \addcontentsline{toc}{#1}{%
             \ifnum #2>\c@secnumdepth \else
                 \protect\numberline{\csname the#1\endcsname}%

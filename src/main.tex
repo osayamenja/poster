@@ -12,72 +12,25 @@
     \author{
         % First Author
         \alignauthor
-        Ben Trovato\titlenote{Dr.~Trovato insisted his name be first.}\\
-        \affaddr{Institute for Clarity in Documentation}\\
-        \email{trovato@corporation.com}
+        Jonathan O Aimuyo\\
+        \affaddr{Cornell University}\\
+        \email{oja7@cornell.edu}
         % Second Author
         \alignauthor
-        G.K.M. Tobin\titlenote{The secretary disavows
-        any knowledge of this author's actions.}\\
-        \affaddr{Institute for Clarity in Documentation}\\
-        \email{webmaster@marysville-ohio.com}
+        Rachee Singh\titlenote{Advisor}\\
+        \affaddr{Cornell University}\\
+        \email{rachee@cs.cornell.edu}
     }
 
     \maketitle
-    \begin{abstract}
-        This paper provides a sample of a \LaTeX\ document which conforms,
-        somewhat loosely, to the formatting guidelines for
-        ACM SIG Proceedings.
-        It is an {\em alternate} style which produces
-        a {\em tighter-looking} paper and was designed in response to
-        concerns expressed, by authors, over page-budgets.
-        It complements the document \textit{Author's (Alternate) Guide to
-        Preparing ACM SIG Proceedings Using \LaTeX$2_\epsilon$\ and Bib\TeX}.
-        This source file has been written with the intention of being
-        compiled under \LaTeX$2_\epsilon$\ and BibTeX.
+    \input{content/abstract}
 
-        The developers have tried to include every imaginable sort
-        of ``bells and whistles", such as a subtitle, footnotes on
-        title, subtitle and authors, as well as in the text, and
-        every optional component (e.g. Acknowledgments, Additional
-        Authors, Appendices), not to mention examples of
-        equations, theorems, tables and figures.
+    \input{content/intro}
 
-        To make best use of this sample document, run it through \LaTeX\
-        and BibTeX, and compare this source code with the printed
-        output produced by the dvi file.
-        A compiled PDF version
-        is available on the web page to help you with the
-        `look and feel'.
-    \end{abstract}
-%    \input{content/abstract}
+    \input{content/result}
 
-    \section{Introduction}\label{sec:introduction}
-    The \textit{proceedings} are the records~\cite{Lamport:LaTeX} of a conference.
-    ACM seeks to give these conference by-products a uniform,
-    high-quality appearance.  To do this, ACM has some rigid
-    requirements for the format of the proceedings documents: there
-    is a specified format (balanced  double columns), a specified
-    set of fonts (Arial or Helvetica and Times Roman) in
-    certain specified sizes (for instance, 9 point for body copy),
-    a specified live area (18 $\times$ 23.5 cm [7" $\times$ 9.25"]) centered on
-    the page, specified size of margins (1.9 cm [0.75"]) top, (2.54 cm [1"]) bottom
-    and (1.9 cm [.75"]) left and right; specified column width
-    (8.45 cm [3.33"]) and gutter size (.83 cm [.33"]).
+    \input{content/ack}
 
-    The good news is, with only a handful of manual
-    settings, the \LaTeX\ document
-    class file handles all of this for you.
-
-    The remainder of this document is concerned with showing, in
-    the context of an ``actual'' document, the \LaTeX\ commands
-    specifically available for denoting the structure of a
-    proceedings paper, rather than with giving rigorous descriptions
-    or explanations of such commands.
-%    \input{content/intro}
-%%
-%%    \input{content/ack}
-%
     \bibliographystyle{abbrv}
     \bibliography{biblio}
 
