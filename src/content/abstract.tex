@@ -6,17 +6,20 @@
     mitigates the skyrocketing scaling costs and power consumption of larger Deep Learning models.
     Existing work demonstrates that this architecture achieves these savings without compromising
     latency or model accuracy.
-    However, distributed MoE computation as implemented today necessitates frequent \emph{synchronous all-to-all}
+    However, distributed MoE computation as implemented today necessitates frequent \emph{synchronous}~\ata
     communication that poses significant overhead, especially at scale.
+    We seek to clarify and address synchronous All-to-All bottlenecks in distributed MoE computation
+    both in single-node and multi-node settings.
 
-    We thoroughly trace $>2k$ \emph{all-to-all} CUDA kernels and observe that their runtimes exhibit
-    a long-tail distribution with average and worst-case slow down of \textbf{4X} and \textbf{50X} respectively.
-    We argue that this phenomenon is a side effect of the \emph{global synchronization}
-    necessitated by the \emph{all-to-all} algorithm
-    implemented in state of the art collective libraries such as NCCL\@.
+    Precisely, we investigate more than \textbf{23k}~\ata CUDA kernels and empirically confirm that
+    their runtimes exhibit a long-tail distribution
+    with an average and a worst-case slow-down of \textbf{4X} and \textbf{50X}, respectively.
+    We argue that this phenomenon is a shortcoming of the \emph{global synchronization}
+    necessitated by the synchronous implementation of~\ata in state of the art collective libraries such as NCCL\@.
     Second, we further show that even within a high-bandwidth supercomputing cluster,
-    inter-node communication between two nodes is about \textbf{7X} slower compared to a single-node with equal number of GPUs.
+    inter-node~\ata communication between two nodes is about \textbf{7X} slower compared
+    to a single-node with equal number of GPUs.
     As such, we propose a novel algorithm that uses \emph{asynchronous communication}
-    interleaved with compute and we further argue for expert stacking and topology-awareness
+    interleaved with compute and we further argue for expert stacking and topology awareness optimizations
     in automatic expert parallelism.
 \end{abstract}
