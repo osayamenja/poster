@@ -2,5 +2,21 @@
 %! Date = 2/22/24
 
 \begin{abstract}
-    TODO
+    Through sparsely activated computation, the Mixture-of-Experts (MoE) architecture
+    mitigates the skyrocketing scaling costs and power consumption of larger Deep Learning models.
+    Existing work demonstrates that this architecture achieves these savings without compromising
+    latency or model accuracy.
+    However, distributed MoE computation as implemented today necessitates frequent \emph{synchronous all-to-all}
+    communication that poses significant overhead, especially at scale.
+
+    We thoroughly trace $>2k$ \emph{all-to-all} CUDA kernels and observe that their runtimes exhibit
+    a long-tail distribution with average and worst-case slow down of \textbf{4X} and \textbf{50X} respectively.
+    We argue that this phenomenon is a side effect of the \emph{global synchronization}
+    necessitated by the \emph{all-to-all} algorithm
+    implemented in state of the art collective libraries such as NCCL\@.
+    Second, we further show that even within a high-bandwidth supercomputing cluster,
+    inter-node communication between two nodes is about \textbf{7X} slower compared to a single-node with equal number of GPUs.
+    As such, we propose a novel algorithm that uses \emph{asynchronous communication}
+    interleaved with compute and we further argue for expert stacking and topology-awareness
+    in automatic expert parallelism.
 \end{abstract}
