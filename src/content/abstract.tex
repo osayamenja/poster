@@ -1,24 +1,29 @@
 %! Date = 2/22/24
 
 \begin{abstract}
-    Through sparsely activated computation, the Mixture-of-Experts (MoE) architecture
-    mitigates the skyrocketing scaling costs and power consumption of larger Deep Learning models.
-    Existing work demonstrates that this architecture achieves these savings without compromising
-    latency or model accuracy.
-    However, distributed MoE computation as implemented today necessitates frequent \emph{synchronous}~\ata
+    We propose a communication-optimal, distributed algorithm that uses \emph{asynchronous communication}
+    interleaved with compute for specifically tackling the communication overhead of
+    Distributed Mixture-of-Experts (DMoE) computation.
+    We also introduce \emph{topology-algorithm} ($\mathrm{TA^2}$) codesign for automatic expert parallelism,
+    which guarantees that our algorithm's theoretical worst-case performance matches the best-case
+    for state-of-the-art~\ata implemented in NCCL\@.
+    DMoE as implemented today necessitates frequent \emph{synchronous}~\ata
     communication that poses significant overhead, especially at scale.
-    We seek to clarify and address synchronous All-to-All bottlenecks in distributed MoE computation
+    However, we observe in existing work that there is a lack of empirical consensus on the proportion or scaling laws
+    of this overhead and whether it stems from suboptimal interconnects, parallelism strategy or algorithms.
+    Thus, we first seek clarification on how~\ata bottlenecks DMoE
     both in single-node and multi-node settings.
 
-    Precisely, we investigate more than \textbf{23k}~\ata CUDA kernels and empirically confirm that
-    their runtimes exhibit a long-tail distribution
+    Precisely, using the gold-standard profiler NVIDIA Nsight, we investigate more than \textbf{23k}~\ata CUDA kernels
+    and empirically confirm that their runtimes exhibit a long-tail distribution
     with an average and a worst-case slow-down of \textbf{4X} and \textbf{50X}, respectively.
-    We argue that this phenomenon is a shortcoming of the \emph{global synchronization}
-    necessitated by the synchronous implementation of~\ata in state of the art collective libraries such as NCCL\@.
-    Second, we further show that even within a high-bandwidth supercomputing cluster,
-    inter-node~\ata communication between two nodes is about \textbf{7X} slower compared
-    to a single-node with equal number of GPUs.
-    As such, we propose a novel algorithm that uses \emph{asynchronous communication}
-    interleaved with compute and we argue for expert stacking and topology-awareness in
-    automatic expert parallelism.
+    We argue that this phenomenon is a shortcoming of the \emph{global barrier}
+    necessitated by the synchronous implementation of~\ata in state-of-the-art collective libraries such as NCCL\@.
+    Second, we further discover that even within a high-bandwidth supercomputing cluster,
+    inter-node~\ata communication between two A100-nodes is about \textbf{7X} slower compared
+    to that of a single-node Azure NDv2 with equal number but older V100s.
+    We use these empirical insights to motivate our algorithm, which obviates the global barrier,
+    instead favoring asynchronous communication yielding native support for pipelining.
+    Our algorithm also exposes tunable hyperparameters that navigate the tradeoff of faster performance and
+    reduced token dropping.
 \end{abstract}
