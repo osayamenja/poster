@@ -1,5 +1,22 @@
-%! Author = jonathan
 %! Date = 2/22/24
 
 \section{Introduction}\label{sec:introduction}
-TODO
+Current work shows the Mixture-of-Experts (MoE) architecture~\cite{10.1162/neco.1991.3.1.79}
+is a productive answer to the problem of efficiently training and serving larger models
+up to trillions of parameters~\cite{DBLP:journals/corr/abs-2101-03961} and facilitating sequence length in the order of
+millions~\cite{Gemini_Team_2024}.
+In current implementations, the MoE architecture entails substituting the Feed-Forward Network (FFN) of a transformer
+encoder or decoder with $n$ replicas termed \emph{experts} and a gating network, collectively comprising an MoE layer
+~\cite{ShazeerMMDLHD17}.
+The key insight is ~\emph{conditional computation}, which entails sparse utilization
+of a subset of a model’s parameters contingent on its input~\cite{doi:10.1142/S0218001403002411}.
+Empirical work from the DeepSpeed team of Microsoft shows 5x less training time for a GPT-3 MoE model at 1.3B and
+7.3X faster inference for a trillion-parameter MoE model~\cite{pmlr-v162-rajbhandari22a}.
+Notably, recently released Gemini 1.5, the first multimodal model to support context length of millions of tokens,
+adopts this architecture~\cite{Gemini_Team_2024}.
+
+On the other hand, this architecture introduces new algorithmic and systems challenges,
+such as load balancing across experts~\cite{ShazeerMMDLHD17}, training instability~\cite{NEURIPS2022_3e67e84a},
+expert capacity restriction leading to token dropping~\cite{gale2022megablocks},
+and collective communication overhead~\cite{DBLP:journals/corr/abs-2006-16668}.
+In a distributed setting

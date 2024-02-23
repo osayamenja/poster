@@ -1,8 +1,17 @@
-%! Author = jonathan
 %! Date = 2/22/24
 
 % Packages
 \documentclass{sig-alternate-per}
+\usepackage[
+    backend=biber,
+    style=alphabetic,
+    sorting=ynt,
+    maxnames=4,
+    doi=false,
+    url=false
+]{biblatex}
+\addbibresource{biblio.bib}
+
 \begin{document}
     \title{TBD}
 
@@ -32,7 +41,8 @@
 
     \input{content/ack}
 
-    \bibliographystyle{abbrv}
-    \bibliography{biblio}
+    %\bibliographystyle{ieeetr}
+    %\bibliography{biblio}
+    \printbibliography
 
 \end{document}
