@@ -2,3 +2,4 @@ out
 .idea
 *.iml
 *.original
+.DS_Store
