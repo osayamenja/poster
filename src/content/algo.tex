@@ -1,0 +1,77 @@
+%! Date = 2/23/24
+
+\section{Algorithm}\label{sec:algorithm}
+\begin{table}[!h]
+    \centering
+    \resizebox{\columnwidth}{!}{%
+        \begin{tabular}{ll}
+            \toprule
+            \textbf{Notation} & \textbf{Description} \\
+            \midrule
+            $H(x,\:y)$ & Heaviside Function $H(x)$, where $H(0) = y$ following~\cite{PyT_2023}\\
+            $k$ & Number of experts selected during token routing, $k \in \mathbb{N}$ see $top\_k$ in ~\cite{ShazeerMMDLHD17}\\
+            $X$ & Set of all experts, $X \in \mathbb{N}^{|X|}$\\
+            $N$ & Set of all nodes, $N \subset \mathbb{Z}$ \\
+            $J_n$ & Set of all ranks in node $n$, $J_n \subset \mathbb{Z}$ \\
+            $W$ & World of workers, note $|N| \cdot |J_n| = |W|$\\
+            $\varepsilon$ & Optimism factor, $\varepsilon \in \{0, \ldots,\: |W| - 1\} \subset \mathbb{Z^+},$
+            $\forall w \in W$ $\varepsilon_w = \varepsilon$\\
+            $G_j^n$ & Worker with rank $j$ in node $n$ \\
+            $X_j^n$ & Set of experts hosted on $G_j^n$, $X_j^n \subseteq X$ \\
+            $\phi$ & Tensor mapping $G_j^n$ tokens $T$ to experts $X' \subseteq X$,
+            $\phi \in \mathbb{R}^{|T| \times k}$  \\
+            $S$ & Sharding specification tensor mapping $X$ to $W' \subseteq W$\\
+            \bottomrule
+        \end{tabular}
+    }
+    \caption{Notation}
+    \label{tab:algonotation}
+\end{table}
+%% This declares a command \Comment
+%% The argument will be surrounded by /* ... */
+% \SetKwComment{Comment}{/* }{ */}
+\SetKwInput{KwRequire}{Require}
+\SetKw{kwAnd}{and}
+\SetKw{kwTrue}{True}
+\SetKw{kwFalse}{False}
+
+\begin{algorithm}[!h]
+    \DontPrintSemicolon
+    \scriptsize
+    \caption{Executed by each $G_j^n$}\label{alg:two}
+    \KwData{$Q$: a blocking task FIFO queue}
+    \KwRequire{$k$, $d$, $X_j^n$, $S$, $\phi$, $\varepsilon$, $|W|$}
+    \Begin{
+        $\xi \gets \varepsilon$\;
+        $G_\phi \gets \mathbf{GetWorkers}(\phi, \: S)$\;
+        ${\mu} \gets |G_\phi| + H(|X_j^n|,\:0) \cdot (|W| - 1)$\;
+        $flag \gets$ \kwFalse\;
+        $W' \gets S.W'$\;
+        \If{$G_j^n \in G_\phi$}{
+            $\mu \gets \mu + 1$\;
+            $\xi \gets \xi + 1$\;
+        }
+        $\mathbf{broadcast}(shouldProcess,\> \phi, \> G_\phi)$\;
+        \While{$Q.timeout == $ \kwFalse \kwAnd $\mu > 0$}{
+            \If{$flag == $ \kwFalse \kwAnd $\xi == 0$}{
+                $Q.\mathbf{ActivateCountdown}()$\;
+                $flag \gets $ \kwTrue\;
+            }
+            $t \gets Q.\mathbf{take()}$\;
+            \uIf{$t.processed == $ \kwTrue}{
+                $\mathbf{PostProcessing}(\phi,\> t)$\;
+                $\xi \gets \xi - 1$\;
+                $\mu \gets \mu - 1$\;
+            }
+            \uElseIf{$t.shouldProcess == $ \kwTrue}{
+                $\theta = \mathbf{ExpertProcessing}(t.\tau, \> X_j^n)$\;
+                $\mathbf{Send}^{\dagger}(processed,\> \theta, \> t.workers)$\;
+                $W' \gets W' - t.workers$\;
+                $\mu \gets \mu - 1$\;
+            }
+        }
+        \If{$\epsilon > 0$ \kwAnd $Q.timeout == $ \kwTrue}{
+            $\mathbf{broadcast}(processed, \> W')$\;
+        }
+    }
+\end{algorithm}
