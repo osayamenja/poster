@@ -1,14 +1,23 @@
 %! Date = 2/22/24
 
 \section{Introduction}\label{sec:introduction}
+Since the advent of the Transformer~\cite{NEURIPS2017_3f5ee243}, existing trends in language model complexity
+indicate a steep exponential increase~\cite{DBLP:journals/corr/abs-2201-11990} in model parameters.
+These larger Transformer models achieve significantly better performance
+~\cite{DBLP:journals/corr/abs-2005-14165, DBLP:journals/corr/abs-2001-08361},
+hence the appeal to scale their size continuously.
+However, this scale demands exorbitant compute resources,
+necessitating a distributed setting as memory requirements exceed the capacity of any
+single accelerator (GPU, TPU, FPGA, etc.)~\cite{DBLP:journals/corr/abs-2201-11990}
+This interplay begs the question:
+\emph{how do we sidestep the high energy and hardware costs of scaling Large Transformer models?}
+
 Current work shows the Mixture-of-Experts (MoE) architecture~\cite{10.1162/neco.1991.3.1.79}
-is a productive answer to the problem of efficiently training and serving larger models
-up to trillions of parameters~\cite{DBLP:journals/corr/abs-2101-03961} and facilitating sequence length in the order of
-millions~\cite{Gemini_Team_2024}.
-In current implementations, the MoE architecture entails substituting the Feed-Forward Network (FFN) of a transformer
+is a productive answer to this conundrum.
+This architecture entails substituting the Feed-Forward Network (FFN) of a transformer
 encoder or decoder with $n$ replicas termed \emph{experts} and a gating network, collectively comprising an MoE layer
 ~\cite{ShazeerMMDLHD17}.
-The key insight is ~\emph{conditional computation}, which entails sparse utilization
+The key insight is ~\emph{conditional computation}: sparse utilization
 of a subset of a model’s parameters contingent on its input~\cite{doi:10.1142/S0218001403002411}.
 Empirical work from the DeepSpeed team of Microsoft shows 5x less training time for a GPT-3 MoE model at 1.3B and
 7.3X faster inference for a trillion-parameter MoE model~\cite{pmlr-v162-rajbhandari22a}.

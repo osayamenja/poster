@@ -2,21 +2,16 @@
 
 % Packages
 \documentclass{sig-alternate-per}
-\usepackage[
-    backend=biber,
-    style=alphabetic,
-    sorting=ynt,
-    maxnames=4,
-    doi=false,
-    url=false
-]{biblatex}
+\usepackage[linesnumbered,ruled,longend,commentsnumbered]{algorithm2e}
+\usepackage{adjustbox}
 \usepackage{booktabs}
-\addbibresource{biblio.bib}
+\usepackage{hyperref}
+\usepackage{subcaption}
 
 \begin{document}
     \title{TBD}
 
-    \numberofauthors{2}
+    \numberofauthors{1}
 
     \author{
         % First Author
@@ -24,28 +19,24 @@
         Jonathan O Aimuyo\\
         \affaddr{Cornell University}\\
         \email{oja7@cornell.edu}
-        % Second Author
-        \alignauthor
-        Rachee Singh\\
-        \affaddr{Cornell University}\\
-        \email{rachee@cs.cornell.edu}
     }
 
-    \newcommand{\ata}{\emph{All-to-All} }
+    \newcommand{\ata}{\emph{All-to-All}}
 
     \maketitle
     \input{content/abstract}
 
+    % Let's squeeze intro into the motivation section
     \input{content/intro}
 
     \input{content/motivation}
 
-    \input{content/result}
+    % Algorithm
+    \input{content/algo}
 
     \input{content/ack}
 
-    %\bibliographystyle{ieeetr}
-    %\bibliography{biblio}
-    \printbibliography
+    \bibliographystyle{abbrv}
+    \bibliography{main}
 
 \end{document}
