@@ -7,9 +7,9 @@
 \usepackage{booktabs}
 \usepackage{hyperref}
 \usepackage{subcaption}
-
+\newtheorem{theorem}{Theorem}[section]
 \begin{document}
-    \title{TBD}
+    \title{Aristos}
 
     \numberofauthors{1}
 
@@ -29,7 +29,9 @@
     % Let's squeeze intro into the motivation section
     \input{content/intro}
 
-    \input{content/motivation}
+    \input{content/background}
+
+    \input{content/observations}
 
     % Algorithm
     \input{content/algo}
@@ -37,6 +39,6 @@
     \input{content/ack}
 
     \bibliographystyle{abbrv}
-    \bibliography{main}
+    \bibliography{bibliography/main}
 
 \end{document}

@@ -1,30 +1,24 @@
 %! Date = 2/22/24
 
 \begin{abstract}
-    We propose a communication-optimal, distributed algorithm that uses \emph{asynchronous communication}
-    interleaved with compute for specifically tackling the communication overhead of
+    We propose Aristos~\footnote{Translation of \textbf{optimal} in Greek}
+    a communication-optimal, distributed algorithm that uses \emph{asynchronous communication}
+    interleaved with computation for specifically tackling the communication overhead of
     Distributed Mixture-of-Experts (DMoE) computation.
-    We also introduce \emph{topology-algorithm-algorithm} ($\mathrm{TA^2}$) codesign for automatic expert parallelism,
-    which guarantees that our algorithm's theoretical worst-case performance matches the best-case of
-    state-of-the-art~\verb|All-to-All| by NCCL.\@
-    DMoE as implemented today entails frequent synchronous~\verb|All-to-All| communication
-    that scales linearly~\emph{per step} with a model's number of layers.
-    Yet we observe in existing work that there is a lack of consensus on the proportion or causative factors
-    of this overhead;
-    specifically, whether it stems from suboptimal interconnects, parallelism strategy or algorithms.
-    Thus, we first seek clarification on how~\ata bottlenecks DMoE
-    both in single-node and multi-node settings.
+    DMoE as implemented today entails frequent synchronous~\verb|All-to-All| communication operations
+    that scale linearly~\emph{per step} with a model's number of layers.
+    Thus, we first seek clarification on how~\verb|All-to-All| bottlenecks DMoE
+    and whether the interconnect or communication algorithm is at fault.
 
-    Precisely, using the gold-standard profiler NVIDIA Nsight, we investigate more than \textbf{23k}~\verb|All-to-All| CUDA kernels
+    We investigate more than \textbf{21k}~\verb|All-to-All| CUDA kernels
     and empirically confirm that their runtimes exhibit a long-tail distribution
-    with an average and a worst-case slow-down of \textbf{4X} and \textbf{50X}, respectively.
+    with worst-case slow-down of
+    \textbf{8.9}X and \textbf{100}X in multi-node and single-node settings, respectively.
     We argue that this phenomenon is a shortcoming of the \emph{global barrier}
-    necessitated by the synchronous implementation of~\verb|All-to-All| in state-of-the-art collective libraries such as NCCL\@.
-    Second, we further discover that even within a high-bandwidth supercomputing cluster,
-    inter-node~\verb|All-to-All| communication between two A100-nodes is about \textbf{7X} slower compared
-    to that of a single-node Azure NDv2 with equal number but older V100s.
-    We use these empirical insights to motivate our algorithm, which obviates the global barrier,
+    necessitated by the synchronous implementation of~\verb|All-to-All| in state of the art
+    collective libraries such as NCCL\@.
+    We use these empirical insights to motivate Aristos, which obviates the global barrier,
     instead favoring asynchronous communication yielding native support for pipelining.
-    Our algorithm also exposes tunable hyperparameters that navigate the tradeoff of faster performance and
+    Aristos also exposes tunable hyperparameters that navigate the tradeoff of faster performance and
     reduced token dropping.
 \end{abstract}
