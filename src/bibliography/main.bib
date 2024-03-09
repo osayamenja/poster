@@ -1,18 +1,18 @@
 %! Date = 2/22/24
-
-% Bibliography Starts
-@article{10.1162/neco.1991.3.1.79,
-  author        = {Jacobs, Robert A. and Jordan, Michael I. and Nowlan, Steven J. and Hinton, Geoffrey E.},
-  title         = "{Adaptive Mixtures of Local Experts}",
-  journal       = {Neural Computation},
-  volume        = {3},
+@article{Khorassani2023,
+  author        = {Khorassani, Kawthar Shafie and Chen, Chen-Chun and Ramesh, Bharath and Shafi, Aamir and Subramoni, Hari and Panda, Dhabaleswar K.},
+  title         = {High Performance MPI over the Slingshot Interconnect},
+  journal       = {Journal of Computer Science and Technology},
+  year          = {2023},
+  month         = {Feb},
+  day           = {01},
+  volume        = {38},
   number        = {1},
-  pages         = {79--87},
-  year          = {1991},
-  month         = {03},
-  issn          = {0899-7667},
-  doi           = {10.1162/neco.1991.3.1.79},
-  url           = {https://doi.org/10.1162/neco.1991.3.1.79}
+  pages         = {128--145},
+  abstract      = {The Slingshot interconnect designed by HPE/Cray is becoming more relevant in high-performance computing with its deployment on the upcoming exascale systems. In particular, it is the interconnect empowering the first exascale and highest-ranked supercomputer in the world, Frontier. It offers various features such as adaptive routing, congestion control, and isolated workloads. The deployment of newer interconnects sparks interest related to performance, scalability, and any potential bottlenecks as they are critical elements contributing to the scalability across nodes on these systems. In this paper, we delve into the challenges the Slingshot interconnect poses with current state-of-the-art MPI (message passing interface) libraries. In particular, we look at the scalability performance when using Slingshot across nodes. We present a comprehensive evaluation using various MPI and communication libraries including Cray MPICH, Open- MPI + UCX, RCCL, and MVAPICH2 on CPUs and GPUs on the Spock system, an early access cluster deployed with Slingshot-10, AMD MI100 GPUs and AMD Epyc Rome CPUs to emulate the Frontier system. We also evaluate preliminary CPU-based support of MPI libraries on the Slingshot-11 interconnect.},
+  issn          = {1860-4749},
+  doi           = {10.1007/s11390-023-2907-5},
+  url           = {https://doi.org/10.1007/s11390-023-2907-5}
 }
 @article{DBLP:journals/corr/abs-2001-08361,
   author        = {Jared Kaplan and others},
@@ -275,6 +275,22 @@
   month         = jun,
   collection    = {ICS '23}
 }
+@inproceedings{10.1145/2987550.2987554,
+  author        = {Harlap, Aaron and Cui, Henggang and Dai, Wei and Wei, Jinliang and Ganger, Gregory R. and Gibbons, Phillip B. and Gibson, Garth A. and Xing, Eric P.},
+  title         = {Addressing the straggler problem for iterative convergent parallel ML},
+  year          = {2016},
+  isbn          = {9781450345255},
+  publisher     = {Association for Computing Machinery},
+  address       = {New York, NY, USA},
+  url           = {https://doi-org.proxy.library.cornell.edu/10.1145/2987550.2987554},
+  doi           = {10.1145/2987550.2987554},
+  abstract      = {FlexRR provides a scalable, efficient solution to the straggler problem for iterative machine learning (ML). The frequent (e.g., per iteration) barriers used in traditional BSP-based distributed ML implementations cause every transient slowdown of any worker thread to delay all others. FlexRR combines a more flexible synchronization model with dynamic peer-to-peer re-assignment of work among workers to address straggler threads. Experiments with real straggler behavior observed on Amazon EC2 and Microsoft Azure, as well as injected straggler behavior stress tests, confirm the significance of the problem and the effectiveness of FlexRR's solution. Using FlexRR, we consistently observe near-ideal run-times (relative to no performance jitter) across all real and injected straggler behaviors tested.},
+  booktitle     = {Proceedings of the Seventh ACM Symposium on Cloud Computing},
+  pages         = {98–111},
+  numpages      = {14},
+  location      = {Santa Clara, CA, USA},
+  series        = {SoCC '16}
+}
 @misc{bengio2013deep,
   title         = {Deep Learning of Representations: Looking Forward},
   author        = {Yoshua Bengio},
@@ -360,12 +376,12 @@
   archiveprefix = {arXiv},
   primaryclass  = {cs.CL}
 }
-@online{cupti,
-  author        = {NVIDIA},
-  title         = {CUPTI User Guide},
-  year          = {2023},
-  lastaccessed  = {Jan 8, 2024},
-  url           = {https://docs.nvidia.com/cupti/pdf/Cupti.pdf}
+@online{deepspeedcomm,
+  author        = {DeepSpeed},
+  title         = {Communication Logging},
+  year          = {2024},
+  lastaccessed  = {Mar 8, 2024},
+  url           = {https://www.deepspeed.ai/tutorials/comms-logging/}
 }
 @online{mixtral8x7B,
   author        = {MistralAI},
@@ -388,19 +404,12 @@
   lastaccessed  = {Feb 23, 22024},
   url           = {https://docs.nersc.gov/systems/perlmutter/architecture/}
 }
-@online{nvl,
+@online{nccl,
   author        = {NVIDIA},
-  title         = {NVLink and NVSwitch},
+  title         = {NCCL: Optimized primitives for inter-GPU communication.},
   year          = {2024},
-  lastaccessed  = {Feb 23, 2024},
-  url           = {https://www.nvidia.com/en-us/data-center/nvlink/}
-}
-@online{megatron-deepspeed,
-  author        = {Microsoft},
-  title         = {Megatron-DeepSpeed},
-  year          = {2024},
-  lastaccessed  = {Feb 23, 2024},
-  url           = {https://github.com/microsoft/Megatron-DeepSpeed}
+  lastaccessed  = {Mar 8, 2024},
+  url           = {https://github.com/NVIDIA/nccl}
 }
 @online{ncu,
   author        = {NVIDIA},
@@ -421,27 +430,4 @@
   year          = {2022},
   title         = {NVTX},
   url           = {https://github.com/NVIDIA/NVTX/tree/release-v3/python}
-}
-@online{pytorchProfiler,
-  author        = {PyTorch Contributors},
-  organization  = {PyTorch},
-  title         = {TORCH.PROFILER},
-  year          = {2023},
-  lastaccessed  = {Jan 8, 2024},
-  url           = {https://pytorch.org/docs/stable/profiler.html}
-}
-@online{pytorchddp,
-  author        = {Shen Li and Joe Zhu},
-  organization  = {PyTorch},
-  title         = {GETTING STARTED WITH DISTRIBUTED DATA PARALLEL},
-  year          = {2023},
-  lastaccessed  = {Jan 14, 2024},
-  url           = {https://pytorch.org/tutorials/intermediate/ddp\_tutorial.html}
-}
-@online{pytorchac,
-  organization  = {PyTorch},
-  title         = {How Activation Checkpointing enables scaling up training deep learning models},
-  year          = {2023},
-  lastaccessed  = {Jan 14, 2024},
-  url           = {https://medium.com/pytorch/how-activation-checkpointing-enables-scaling-up-training-deep-learning-models-7a93ae01ff2d}
 }
