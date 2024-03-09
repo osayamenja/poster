@@ -1,10 +1,10 @@
 %! Date = 2/22/24
 
 \begin{abstract}
-    We propose Aristos~\footnote{Translation of \textbf{optimal} in Greek}
+    We propose \emph{Aristos}~\footnote{Translation of \textbf{optimal} in Greek}
     a communication-optimal, distributed algorithm that uses \emph{asynchronous communication}
     interleaved with computation for specifically tackling the communication overhead of
-    Distributed Mixture-of-Experts (DMoE) computation.
+    Distributed Mixture-of-Experts (DMoE) transformer models.
     DMoE as implemented today entails frequent synchronous~\verb|All-to-All| communication operations
     that scale linearly~\emph{per step} with a model's number of layers.
     Thus, we first seek clarification on how~\verb|All-to-All| bottlenecks DMoE

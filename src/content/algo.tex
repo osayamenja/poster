@@ -8,7 +8,7 @@
             \toprule
             \textbf{Notation} & \textbf{Description} \\
             \midrule
-            $H(x,\:y)$ & Heaviside Function $H(x)$, where $H(0) = y$ following~\cite{PyT_2023}\\
+            $H(x,\:y)$ & Heaviside Function $H(x)$, where $H(0) = y$\\
             $d$ & Data parallel degree, $d \in \mathbb{N}$\\
             $m$ & model parallel degree, $m \in \mathbb{N}$\\
             $k$ & Number of experts selected during token routing, $k \in \mathbb{N}$ see $top\_k$ in ~\cite{ShazeerMMDLHD17}\\
@@ -40,20 +40,20 @@
 \begin{algorithm}[!h]
     \DontPrintSemicolon
     \scriptsize
-    \caption{Executed by each $G_j^n$}\label{alg:two}
-    \KwData{$Q$: a blocking task FIFO queue}
+    \caption{Aristos; executed by each $G_j^n$}\label{alg:two}
+    \KwData{$Q$: a blocking FIFO queue of tasks}
     \KwRequire{$X_j^n$, $S$, $\phi$, $\varepsilon$, $|W|$}
     \Begin{
         $\xi \gets \varepsilon$\;
         $G_\phi \gets \mathbf{GetWorkers}(\phi, \: S)$\;
-        ${\mu} \gets |G_\phi| + H(|X_j^n|,\:0) \cdot (|W| - 1)$ \tcp*[f]{Upper bound for tasks}\;
+        ${\mu} \gets |G_\phi| + H(|X_j^n|,\:0) \cdot (|W| - 1)$\;
         $flag \gets$ \kwFalse\;
         $W' \gets S.W'$\;
         \If{$G_j^n \in G_\phi$}{
             $\mu \gets \mu + 1$\;
             $\xi \gets \xi + 1$\;
         }
-        $\mathbf{broadcast}(shouldProcess,\> \phi, \> G_\phi)$ \tcp*[f]{Send token slices to corresponding workers}\;
+        $\mathbf{broadcast}(shouldProcess,\> \phi, \> G_\phi)$\;
         \While{$Q.timeout == $ \kwFalse \kwAnd $\mu > 0$}{
             \If{$flag == $ \kwFalse \kwAnd $\xi == 0$}{
                 $Q.\mathbf{ActivateCountdown}()$\label{alg:countdown}\;
@@ -66,7 +66,7 @@
                 $\mu \gets \mu - 1$\;
             }
             \uElseIf{$t.shouldProcess == $ \kwTrue}{
-                $\theta = \mathbf{ExpertProcessing}(t.\tau, \> X_j^n)$\;
+                $\theta = \mathbf{ExpertProcessing}(t, \> X_j^n)$\;
                 $\mathbf{Send}(processed,\> \theta, \> t.workers)$\label{alg:send}\;
                 $W' \gets W' - t.workers$\;
                 $\mu \gets \mu - 1$\;
@@ -77,23 +77,19 @@
         }
     }
 \end{algorithm}
-We use the empirical data in \S\ref{sec:observations} as inspiration for Aristos that pipelines
-MoE computation with one-sided computation and enables early-stopping via \emph{timeouts}.
-Specifically, Aristos uses only one-sided accelerator-initiated (not host) communication primitives,
-thus obviating the implicit barrier of NCCL~\verb|All-to-All|.
-Further, Aristos tackles the straggler effect, using timeouts, wherein a fast worker can discontinue the
+In addition to pipelining, Aristos enables early-stopping via \emph{timeouts}, wherein a fast worker can discontinue the
 collective communication and proceed to their next independent task,
-albeit without updated\footnote{Lorem} logits for their tokens and dropping the tokens of other participating workers.
+albeit without updated logits for their tokens and dropping the tokens of other participating workers.
 Aristos exposes a hyperparameter $\varepsilon$ to navigate this tradeoff between performance and token dropping.
 We defer a complete overview and later optimizations of Aristos to the full version of the paper,
 but briefly present the following.
 \begin{theorem}\label{theo}
-    Assume all processes correct, no failures, links are
+    Assume all processes $w \in W$ are correct with no failures, links are
     reliable and messages arrive in the order they are sent.
     If $\forall w \in W$, $\varepsilon_w = \varepsilon$, then Aristos satisfies liveness.
 \end{theorem}
 Define $\tau_i$ as the timeout time units for a process $p_i$.
-Also, define a passive process as one that has used their timeout and thus terminated the algorithm.
+Also, define a \emph{passive process} as one that has used their timeout and thus terminated the algorithm.
 We start with an example and follow with a proof sketch.
 Consider two processes $p_1$, $p_2$ where $p_1$ sets $\varepsilon_1=0$ and $p_2$ sets $\varepsilon_2=1$.
 Consider the case where $p_1$, after executing line~\ref{alg:countdown},
@@ -101,11 +97,13 @@ times out and exits the loop, while $p_2$ blocks in line~\ref{alg:take}.
 Note that $p_2$ will block indefinitely.
 This would not be the case if $\varepsilon_1=\varepsilon_2=0$
 (both eventually terminate) or $\varepsilon_1=\varepsilon_2=1$
-The latter prevents blocking as ~\ref{alg:broadcast} forces the fastest of $p_1$ or $p_2$ to unblock the other process
+The latter prevents blocking as well
+because line ~\ref{alg:broadcast} forces the fastest of $p_1$ or $p_2$ to unblock the other process
 which they did not receive from during their execution window.
 
-\noindent\emph{Proof Sketch} Observe that if a process $p_i$ is waiting on a \emph{passive}
-process and $\varepsilon_i =0$, then $p_i$ eventually time out after $\tau_i$ and terminate the algorithm.
+\noindent\emph{Proof Sketch}.
+Observe that if $\varepsilon_i =0$,
+then any blocked process $p_i$ will eventually time out after $\tau_i$ and terminate the algorithm.
 If $\varepsilon_i > 0$ then process $p_j$ who $p_i$ awaits, will eventually unblock $p_i$ after executing
 either lines~\ref{alg:send} or ~\ref{alg:broadcast}.
 
@@ -114,6 +112,6 @@ workers distributed per some topology denoted as a graph $G$.
 Importantly, we aim to minimize communication latency $C$ and computation time $P$ for an end-to-end application,
 training or inference, while satisfying memory and other yet to be determined constraints.
 
-A sketch would be $ S = \min C + P$ subject to \[m_i \geq \sum_{e \in X} m_e \cdot x_{ei}, \> \forall i\in W\]
+A simple sketch would be $ S = \min C + P$ subject to \[m_i \geq \sum_{e \in X} m_e \cdot x_{ei}, \> \forall i\in W\]
 Note that $x_{ei}$ is a decision variable mapping expert $e$ to worker $i$, $m_i$ is the memory capacity of $i$ and
 $m_e$ is the memory requirement for $e$.
