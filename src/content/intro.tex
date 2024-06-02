@@ -26,12 +26,12 @@
     \begin{subfigure}{.5\linewidth}
         \centering
         \includegraphics[width=\linewidth]{images/multi_sum_8x4_1.3B_donut}
-        \caption{8 Perlmutter Nodes}
+        \caption{8 Perlmutter GPU Nodes}
         \label{multi_1.3B_pie}
     \end{subfigure}
     \caption{\footnotesize DMoE Training Step CUDA Kernel Distribution.
     Observe in \ref{multi_1.3B_pie} that \emph{All-to-All} is the single most expensive operation.
-    Note Perlmutter is a supercomputer}
+    Note Perlmutter is a supercomputer. $W$x350M means a 350M model with $W$ experts, where each GPU hosts one expert}
     \label{fig:donut}
 \end{figure}
 
@@ -64,22 +64,23 @@
     \caption{\footnotesize Straggler Effect in DMoE Training.
     \textbf{Actual Time} $t_a$ denotes time for the slowest worker to complete the kernel,
         while \textbf{Total Time} $t$ includes the time the fastest worker had to \emph{wait}.
-        Note $Delay = t - t_a$}
+        Note $Delay = t - t_a$ and $\mu$ denotes mean.}
     \label{fig:straggler}
 \end{figure}
-In this work~\footnote{\href{https://github.com/osayamenja/DataCruncher}{Notebook} for all plots and traces}
-~\footnote{Training code available \href{https://github.com/osayamenja/Megatron-DeepSpeed?tab=readme-ov-file}{here}},
+In this work
+~\footnote{\href{https://github.com/osayamenja/DataCruncher}{Notebook} for all plots and traces and
+\href{https://github.com/osayamenja/Megatron-DeepSpeed}{Training Code}},
 we focus on the overhead of synchronous \emph{All-to-All},
 within Distributed MoE~\cite{DBLP:journals/corr/abs-2006-16668}
 and make the following contributions.
-Firstly, we empirically demonstrate that the synchronous constraint of this
-communication operation as implemented by NCCL degrades performance by up to 100X due to
+Firstly, we empirically demonstrate that the synchronous constraint of \verb|All-to-All|
+as implemented by NCCL degrades performance by up to 100X due to
 the open \emph{straggler effect} problem~\cite{10.1145/2987550.2987554}.
 Next, we introduce Aristos, a distributed algorithm
 that obviates this synchronous barrier, in favor of one-sided communication primitives and maximizes
 concurrent overlap of communication and computation specifically for the MoE layer.
-Also, we provide a sketch of a proof verifying the liveness property of Aristos.
-In addition, we sketch an optimization for topology-aware expert parallelism
-with the goal of minimizing communication and computation costs,
-while satisfying memory and parallelism width constraints.
+Also, we provide a proof sketch verifying the liveness property of Aristos.
+Further, we sketch an optimization for topology-aware expert parallelism
+aiming at minimizing communication and computation costs,
+while satisfying memory constraints.
    

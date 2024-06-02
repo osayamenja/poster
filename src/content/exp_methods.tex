@@ -1,0 +1,15 @@
+%! Author = jonathan
+%! Date = 3/8/24
+
+\section{Experimental Methods}\label{sec:experimental_methods}
+To isolate communication bottlenecks, we only consider Distributed Data Parallelism (DDP) and expert parallelism
+~\cite{DBLP:journals/corr/abs-2006-16668}.
+Improving the data collection of related work~\cite{288705},
+we use NVIDIA Nsight Systems to profile over 21k~\verb|All-to-All| CUDA kernels spanning three training runs of two
+GPT-3 MoE models: 350M and 1.3B, on Azure NDv2 and 32 GPUs across 8 Perlmutter nodes.
+Note we performed all experiments on \emph{dedicated} hardware allocations without sharing.
+
+Figure~\ref{fig:straggler} makes it clear that the interconnect is not the bottleneck,
+but rather the synchronization delay due to the implicit barrier of synchronous ~\verb|All-to-All|.
+We clarify that the multi-node results should be much \emph{worse} on commodity clusters that lack
+the high-speed interconnect or RDMA stack of Perlmutter's Slingshot-11~\cite{Khorassani2023}.
