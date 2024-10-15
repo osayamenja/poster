@@ -107,11 +107,24 @@ then any blocked process $p_i$ will eventually time out after $\tau_i$ and termi
 If $\varepsilon_i > 0$ then process $p_j$ who $p_i$ awaits, will eventually unblock $p_i$ after executing
 either lines~\ref{alg:send} or ~\ref{alg:broadcast}.
 
+\section{TOPOLOGY-AWARE Parallelism}\label{sec:automatic-parallelism}
 Note that we foresee deriving $S$ by solving an optimization problem that automatically shards experts across
 workers distributed per some topology denoted as a graph $G$.
-Importantly, we aim to minimize communication latency $C$ and computation time $P$ for an end-to-end application,
-training or inference, while satisfying memory and other yet to be determined constraints.
-
-A simple sketch would be $ S = \min C + P$ subject to \[m_i \geq \sum_{e \in X} m_e \cdot x_{ei}, \> \forall i\in W\]
-Note that $x_{ei}$ is a decision variable mapping expert $e$ to worker $i$, $m_i$ is the memory capacity of $i$ and
-$m_e$ is the memory requirement for $e$.
+Specifically, define $G = (V, E)$ as the cluster topology, where $V$ denotes devices and
+$E$ communication links.
+Equation~\ref{eqn:objective} captures the core objective, namely finding
+$G^* = \{g=(V_g,\;E_g)\;|\; g \subseteq G\}$ the set of optimal expert parallel groups or the
+\emph{topology-aware sharding specification}.
+\begin{align}\label{eqn:objective}
+\min \enspace \max_{g \in G^*} \enspace
+& \kappa\left( \pi(g) + \max_{i \in V_g} \> \mathcal{C}_i \right) +
+T_{\rho}(|G^*|)
+\end{align}
+subject to,
+\begin{align}\label{eqn:constraint}
+\sum\limits_{j \in V_g}{m_j} &\geq |\mathcal{X}| &&\forall g \in G^*
+\end{align}
+\textbf{where}, $\mathcal{X}$ is the set of all experts and $m_j$ is expert memory capacity for device $j$.
+Also, $\kappa$ identifies the frequency of MoE computation,
+$\pi(g)$ is the compute cost of $g$, ${C}_i$ denotes the communication cost of device $i$ and
+$T_{\rho}(|G^*|)$ is the cost of inter-group all-reduce on MoE parameters due to data parallelism.
